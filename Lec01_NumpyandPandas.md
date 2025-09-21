@@ -186,3 +186,161 @@ print(b)
 #out [1, 6, 10]    won't affect a
 ``` 
 It is worth noting that if we didn't copy then delete a directly, Python will not execute it, for the view of a exists and Python thinks a is still referred. So '.copy()' is an important way to save the memory.
+
+## Pandas
+### 1. Basic data structures
+**Series**: a one-dimensional labeled array holding data of any type. Commonly, there are 3 methods to create a pd.series:
+#### <1> from ndarray
+```Python
+import numpy as np
+import pandas as pd
+a = pd.Series(np.arange(4), index = ['a', 'b', 'c', 'd'])
+```
+The 'pd.Series()' has three commonly used parameters: data, index and dtype. Data is always a list, while index is also a list with the same length as data and the data in these two lists correspond one-to-one. 
+
+#### <2> from dict
+```Python
+import numpy as np
+import pandas as pd
+d = {"b": 1, "a": 0, "c": 2}
+a = pd.Series(d)
+#out:
+# b    1
+# a    0
+# c    2
+# dtype: int64
+```
+If an index is passed, the values in data corresponding to the labels in the index will be pulled out and arranged in order.
+```Python
+import numpy as np
+import pandas as pd
+d = {"a": 0.0, "b": 1.0, "c": 2.0}
+pd.Series(d, index=["b", "c", "d", "a"])
+print(d)
+#out:
+# b    1.0
+# c    2.0
+# d    NaN      (Not a Number)
+# a    0.0
+# dtype: float64
+```
+
+#### <3> from a constant
+```Python
+import numpy as np
+import pandas as pd
+pd.Series(5.0, index=["a", "b", "c", "d", "e"])
+# a    5.0
+# b    5.0
+# c    5.0
+# d    5.0
+# e    5.0
+# dtype: float64
+```
+
+\
+The basic functions(like mathematical function) of pd.series is similar to ndarray. When indexing the data in pd.series, it is noted that we can only pass one parameter in the '[]'
+```Python
+import pandas as pd
+import numpy as np
+s = pd.Series([4, -2, 0, 6], index = ["a", "b", "c", "d"])
+s ['a']
+# 4
+s [['a', 'c']] #Attention: we should pass a list, not s['a', 'c']
+# a  4
+# c  0
+# dtype: int64
+s [s > 0]
+# a  4
+# c  0
+# dtype: int64
+```
+
+\
+\
+**DataFrame**:  a two-dimensional data structure that holds data like a two-dimension array or a table with rows and columns. It can also be seen as some series that shared the common index.
+
+Commonly, we have four methods to create a DataFrame object, and the fundamental grammar is:
+```Python
+pd.DataFrame(data, index, columns)
+```
+#### <1> Read from csv
+```Python
+import pandas as pd
+import numpy as np
+df = pd.read_csv('csvPath')
+```
+#### <2> List and column name
+```Python
+import pandas as pd
+import numpy as np
+pd.DataFrame([1, 2, 3], columns=["Numbers"])
+```
+In this situation, DataFrame has two parameters: Data and columns. The number of the rows equals to the number of elements in Data, and the number of columns equals to the number of elements in each element. For example:
+```Python
+import pandas as pd
+import numpy as np
+pd.DataFrame([[1, "one"], [2, "two"]],columns = ["Number", "Description"])
+#out:
+#    Number  Description
+#0     1         one
+#1     2         two
+```
+The index of the row is range(0, length - 1) defaultly.
+#### <3> From Dict
+```Python
+import numpy as np
+import pandas as pd
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie', 'David'],
+    'Age': [25, 30, 35, 40],
+    'City': ['New York', 'London', 'Paris', 'Tokyo']
+}
+df = pd.DataFrame(data)
+```
+The key is the name of columns, and the value is the column of the DataFrame.
+```Python
+import numpy as np
+import pandas as pd
+data = {
+    'Age': {'Alice': 25, 'Bob': 30, 'Charlie': 35},
+    'City': {'Alice': 'NY', 'Bob': 'London', 'Charlie': 'Paris'}
+}
+df = pd.DataFrame(data)
+```
+Similarly, the key is still the name of the column, and the key in the value dict is the name of the row. Creating a DataFrame from dict omits some parameters in DataFrame.
+#### From Series
+```Python
+import numpy as np
+import pandas as pd
+s_a = pd.Series(["a1", "a2", "a3"], index = ["r1", "r2", "r3"])
+s_b = pd.Series(["b1", "b2", "b3"], index = ["r1", "r2", "r3"])
+
+pd.DataFrame({"column_a":s_a, "column_b":s_b})
+```
+***Personally Thoughts:*** DataFrame (include the Series) is really like the Dict, so the grammar between the two has many similarities. This could be paying more attention when studying.
+### 2. Fundamental Functions
+#### <1> Revise the index
+```Python
+import numpy as np
+import pandas as pd
+se1 = pd.Series([1,7,3,9], index = ['d', 'c', 'a', 'f'])
+se2 = se1.reindex(['a', 'b', 'c', 'd', 'e', 'f'])
+```
+This operation only changes the order of the rows, but not change the corresponding relationships(and the new index will correspond with NaN). If we want to change the name of the rows(actually the index), we can write:
+```Python
+se1.index = ['a', 'b', 'c', 'd']
+```
+Situations in DataFrame is similar:
+```Python
+import numpy as np
+import pandas as pd
+df1 = pd.DataFrame(np.arange(9).reshape(3,3),index = ['a','c','d'],columns = ['one','two','four'])
+df1.reindex(index = ['a','b','c','d'],columns = ['one','two','three','four'])
+```
+The new index will correspond with NaN.
+#### <2> Add and Delete elements
+The add operation is the same as dict. In DataFrame, what we add is the column(df['province'] = Pro_list). As to the delete operation, we use .drop() method:
+```Python
+
+```
