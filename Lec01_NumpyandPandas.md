@@ -151,10 +151,38 @@ print(b is a)
 That is because Python passes mutable objects as references.
 
 #### 2. View or shallow copy
+In numpy, we have introduced the concept of data ownership. 
 ```Python
 import numpy as np
 a = np.arange(12).reshape(3, 4)
 c = a.view()
+
 print(c is a)
 #False   This means that the addresses of c and a are different
+print(c.base is a)
+#True    This means the data of c is owned by a
+print(c.flags.owndata)
+#False   This means c doesn't own the data
 ```
+The code above means that the VIEW of a is a new array that occupies a new address, but it doesn't OWN the data. Designing this is to operate the data more flexibly:
+```Python
+c = c.reshape(2, 6)
+print(a.shape)
+#(3, 4)
+c[0, 4] = 1234
+print(a)
+# [[   0,    1,    2,    3],
+#  [1234,    5,    6,    7],
+#  [   8,    9,   10,   11]]
+```
+#### 3. Deep Copy
+'.copy()' operation can create a completely independent array that has the same data as the original array. It should be noted that we should copy the array after slicing the array.
+```Python
+import numpy as np
+a = np.arange(12).reshape(3, 4)
+b = a[:, 2].copy()
+b[0] = 1
+print(b)
+#out [1, 6, 10]    won't affect a
+``` 
+It is worth noting that if we didn't copy then delete a directly, Python will not execute it, for the view of a exists and Python thinks a is still referred. So '.copy()' is an important way to save the memory.
