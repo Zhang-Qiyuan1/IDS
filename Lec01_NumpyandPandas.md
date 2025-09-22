@@ -342,5 +342,45 @@ The new index will correspond with NaN.
 #### <2> Add and Delete elements
 The add operation is the same as dict. In DataFrame, what we add is the column(df['province'] = Pro_list). As to the delete operation, we use .drop() method:
 ```Python
-
+import pandas as pd
+import numpy as np
+df1 = pd.DataFrame(np.arange(9).reshape(3,3),index = ['a','c','d'],columns = ['one','two','four'])
+df1.drop('one', axis = 0)
 ```
+Defaultly, the .drop() method delete the row with pointed label. The key word 'axis' can change it. 'axis = 0' means deleting the row, while 'axis = 1' means deleting the column.
+#### <3> Sort the DataFrame
+```Python
+import numpy as np
+import pandas as pd
+df1 = pd.DataFrame(np.arange(9).reshape(3,3),index = ['a','c','d'],columns = ['one','two','four'])
+# 1. customized sorting
+df1.reindex(['c', 'd', 'a'])
+# 2. sort by index
+df1.sort_index()
+# 3. sort by one characteristic
+df1.sort_values(by = 'two')
+```
+#### <4> Choose the data
+```Python
+import numpy as np
+import pandas as pd
+df1 = pd.DataFrame(np.arange(9).reshape(4,4),index = ['a','b','c','d'],columns = ['one','two','three','four'])
+df1.loc(['a','c'],'one': 'three')
+```
+.loc() method has two parameters: row selector and column selector. In the example above, it returns a 2*2 DataFrame.
+```Python
+import numpy as np
+import pandas as pd
+df1 = pd.DataFrame(np.arange(9).reshape(4,4),index = ['a','b','c','d'],columns = ['one','two','three','four'])
+df1.iloc([0, 2], 0: 2)
+```
+.iloc() method can choose the row/column label positioning by the index in the order.
+```Python
+import numpy as np
+import pandas as pd
+df1 = pd.DataFrame(np.arange(9).reshape(4,4),index = ['a','b','c','d'],columns = ['one','two','three','four'])
+df1[['one', 'three']]   #the columns
+df1[0: ]                #the rows
+df1[df1['three'] > 5]   #based on the bool variable
+```
+However, selectors based on the '[]' is a little bit trouble, we recommand to use the .loc() and .iloc() method.
